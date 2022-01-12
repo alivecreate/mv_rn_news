@@ -17,9 +17,11 @@ import PressnoteDetail from './components/Pressnote/PressnoteDetail'
 import EditPressnote from './components/Pressnote/EditPressnote'
 
 
-
 import BulletinListScreen from './components/Bulletin/BulletinListScreen'
+import BulletinDetailScreen from './components/Bulletin/BulletinDetailScreen'
 import EditBulletin from './components/Bulletin/EditBulletin'
+import EditPost from './components/Posts/EditPost'
+
 import SplashScreen from './components/Splash/SplashScreen';
 import Login from './components/Auth/Login';
 
@@ -44,7 +46,6 @@ const App = () => {
 // }  
 
   useEffect(() => {
-    
     setTimeout(()=>{ 
       setIsVisible(true);  
 
@@ -110,12 +111,19 @@ return(
         options={{headerShown: false, hidden: true}}
         />
         
-        <Drawer.Screen name="PostDetailScreen" component={PostDetailScreen} 
+        <Drawer.Screen name="BulletinDetailScreen" component={BulletinDetailScreen} 
+        options={{headerShown: false, hidden: true}}
+        />
+
+<Drawer.Screen name="PostDetailScreen" component={PostDetailScreen} 
         options={{headerShown: false, hidden: true}}
         />
 
 
-        <Drawer.Screen name="EditBulletin" component={EditBulletin} 
+<Drawer.Screen name="EditBulletin" component={EditBulletin} 
+        options={{headerShown: false, hidden: true}}/>
+
+        <Drawer.Screen name="EditPost" component={EditPost} 
         options={{headerShown: false, hidden: true}}/>
 
         <Drawer.Screen name="CreateBulletin" component={CreateBulletin} 

@@ -88,12 +88,11 @@ export default function SpinnerModal(props) {
                           
                         //   alert('img upload data - '+resp.data);
                           
-                        //   setMulImages(mulImages => [...mulImages, newupdateImage]);
+                          setMulImages(mulImages => [...mulImages, newupdateImage]);
 
-                          // setMulImages([...newMulImages]);
-                          // setMulImages([...newMulImages]);
+                        //   setMulImages([...newMulImages]);
                         //   notifyMessage('Image Uploaded');
-                        //   setIsLoading(false);
+                          setIsLoading(false);
 
                         if(resp.data == 'success'){
                             // var newMulImages = mulImages;
@@ -104,13 +103,13 @@ export default function SpinnerModal(props) {
                             // setMulImages([...newMulImages]);
                             // setMulImages([...newMulImages]);
                             // notifyMessage('Image Uploaded');
-                            alert(resp.data);
+                            notifyMessage('Image Uploaded');
                             setIsLoading(false);
                         }else{
+                            alert(resp.data);
                             setIsLoading(false);
                             notifyMessage(resp.data+'Something went wrong, Please try again. ')
                         }
-
                       })
                       .catch((err) => {
                           
@@ -134,19 +133,19 @@ export default function SpinnerModal(props) {
           { name : 'item', data : filename},
         ])
         .then((resp) => {
-          notifyMessage('del --' + resp.data);
 
-          if(resp.data == 'success'){
-
+          if(resp.data.status == 'success'){
             var newMulImages = mulImages;
             newMulImages.splice(index, 1);
             setMulImages([...newMulImages]);
-        
             var newFileNames = fileNames;
             newFileNames.splice(index, 1);
             setFileNames([...newFileNames]); 
-
+            notifyMessage(+ resp.data);
+          }else{
+              notifyMessage('del --' + resp.data);
           }
+
         }).catch((err) => {
           alert('eerr--' +JSON.stringify(err));
         })
@@ -232,7 +231,7 @@ export default function SpinnerModal(props) {
                             <View style={[styles.container,{height:400}]}>
 
                                 <TouchableOpacity
-                                    onPress={() => {setSpinnerModalVisible(!spinnerModalVisible);  setBtnMoreImage(true);}}
+                                    onPress={() => {setSpinnerModalVisible(false);  setBtnMoreImage(true);}}
                                     style={[styles.closeButton, {  backgroundColor: 'black',alignItems:'center', justifyContent:'center' }]}
                                 >
 
@@ -256,7 +255,7 @@ export default function SpinnerModal(props) {
                                                 color="black"
                                                 size={32}
                                             />
-                                            <Text style={styles.imageBtnText}>Select Images 111 </Text>
+                                            <Text style={styles.imageBtnText}>Select Images </Text>
                                         </>
                                         )}
                                 </TouchableOpacity>
@@ -284,14 +283,20 @@ export default function SpinnerModal(props) {
                                                                     imageStyle={{ borderRadius: 6 }}
                                                                     key={item.fileName}
                                                                 >
+                                                            <TouchableOpacity 
+                                                                style={{ position: 'absolute', bottom: 5, right: 5, backgroundColor: 'white', borderRadius: 4 }}
+                                                                onPress={() => delMulImageNew(index, item, item.fileName)}
+                                                                
+                                                                >
+                                                                    
                                                                     <Ionicons
-                                                                        style={{ position: 'absolute', bottom: 5, right: 5, backgroundColor: '#ffffffc7', borderRadius: 4 }}
                                                                         name="trash-sharp"
                                                                         color={GLOBAL.COLOR.DARK}
                                                                         size={24}
                                                                         key={index}
                                                                         onPress={() => delMulImageNew(index, item, item.fileName)}
                                                                     />
+                                                                </TouchableOpacity>
                                                                 </ImageBackground>
                                                             </View>
                                                         </>
@@ -300,10 +305,9 @@ export default function SpinnerModal(props) {
                                             />
                                         </SafeAreaView >
                                         
-<Text>{JSON.stringify(mulImages)}</Text>
                             </View>
                             
-                        <TouchableOpacity style={[styles.btnSubmit, isSubmitEnabled == true ? styles.btnSubmitEnable : styles.btnSubmitDisable]}
+                        <TouchableOpacity style={[styles.btnSubmit, styles.btnSubmitEnable]}
                             onPress={() => {[clearData('bulletin'), setBtnMoreImage(false), savingDataFn()]}}
                         >
 

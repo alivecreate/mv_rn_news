@@ -7,8 +7,8 @@ module.exports = {
     // IP: 'mailvadodara.com',
 
     //local server
-    BASE_URL: 'http://192.168.105.221/fblog/public/',
-    IP: '192.168.105.221',
+    BASE_URL: 'http://192.168.1.6/fblog/public/',
+    IP: '192.168.1.6',
     
    //vps server
   

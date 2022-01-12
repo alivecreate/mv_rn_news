@@ -1,18 +1,40 @@
-import React from 'react'
-import HTML ,{ IGNORED_TAGS  } from 'react-native-render-html';
+import React, {useMemo} from 'react'
+import HTML from 'react-native-render-html';
 
-import { Linking, Dimensions, Text  } from 'react-native'
+import { Linking, Dimensions, Text} from 'react-native'
 // import iframe from '@native-html/iframe-plugin';
 import Global from '../Global';
 import WebView from 'react-native-webview';
 const { width, height } = Dimensions.get('window');
 
+  
+
 interface Props {
     html: string;
     youtube: string;
 }
+    
+// const tagsStyles = React.useMemo(
+//     () => ({
+//         p:{color:'black', textAlign:'justify', fontSize:20,},
+//         a:{color: Global.COLOR.DARK, fontWeight:'bold', textAlign:'justify', fontSize:20},
+//         span:{color: Global.COLOR.BLACK, fontWeight:'bold', textAlign:'justify', fontSize:30},
+//         img:{ width: 50, height:200},
+//     }),
+    
+//   );
 
+const tagsStyles = {
+    p:{color:'black', textAlign:'justify', fontSize:20,},
+    a:{color: Global.COLOR.DARK, fontWeight:'bold', textAlign:'justify', fontSize:20},
+    span:{color: Global.COLOR.BLACK, fontWeight:'bold', textAlign:'justify', fontSize:30},
+    img:{ width: 50, height:200},
+  };
+  
 const HtmlReader = (props: Props) =>{
+
+
+
 
       
     const youtubeIframe = `
@@ -36,17 +58,13 @@ const HtmlReader = (props: Props) =>{
             onPress={(event, href) =>{
                 Linking.openURL(href) 
             }}
+            contentWidth={width} 
+            
             // ignoredStyles={[ ...IGNORED_TAGS, 'span']}
+
             ignoredStyles={['padding', 'lineHeight', 'fontWeight']}
             
-            tagsStyles={
-                {
-                p:{color:'black', textAlign:'justify', fontSize:20,},
-                a:{color: Global.COLOR.DARK, fontWeight:'bold', textAlign:'justify', fontSize:20},
-                span:{color: Global.COLOR.BLACK, fontWeight:'bold', textAlign:'justify', fontSize:30},
-                img:{ width: 50, height:200, float:'left'},
-                
-            }}
+            tagsStyles={tagsStyles}
         />
 
         {

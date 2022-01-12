@@ -36,19 +36,50 @@ import Spinner from '../Widget/Spinner';
 import Login from '../Auth/Login';
 
 
-const EditBulletin = ({ props, route }) => {
-
+  
+const EditPost = ({ props, route }) => {
   const { id, category_id, title, subtitle, youtube, body,
            slug, image, mul_images, status } = route.params.item;
   
-    const [updateBulletin, setUpdateBulletin] = useState({ id:null, category: null, title: null, subtitle: null,youtube:null, slug: null, body: null,
+
+    const [updatePost, setUpdatePost] = useState({ id:null, category: null, title: null, subtitle: null,youtube:null, slug: null, body: null,
     image:[], mul_images:[], status:true, admin_id: null });
+
+    
+const editNews = (id) => {
+  // alert(JSON.stringify(id));
+  var newId = parseInt(id);
+  // alert('edit id -'+typeof newId);
+
+  axios.post(GLOBAL.BASE_URL+'api/post/edit-post/'+newId)
+  .then(res => {
+      setUpdatePost({
+      id: res.data.post.id, category: res.data.post.category_id, title: res.data.post.title,
+      subtitle: res.data.post.subtitle, slug: res.data.post.slug, body: res.data.post.body,
+      youtube:res.data.post.youtube,
+      image: res.data.post.media, status: res.data.post.status==1?true:false, admin_id: 1
+    });
+    // setMulImages(res.data.media);
+    setSpinnerModalVisible(false);
+    
+  })
+  .catch(error => {
+    setSpinnerModalVisible(false);
+      alert('Server Error - '+JSON.stringify(error.response));
+  })
+
+}
+
+    
+
+
+  
 
   const [isLoading, setIsLoading] = useState(false);
   const [btnMoreImage, setBtnMoreImage] = useState(false);
 
-  const { categoryData, notifyMessage, updateImage, setUpdateImage, savingData, setSavingData,
-    loginData, update, setUpdate, isUpdateEnabled, setIsUpdateEnabled, updatePostFn, updatePostNoImage, multiImgName,
+  const { categoryData, notifyMessage, updateImage, setUpdateImage, updatePostFn, savingData, setSavingData,
+    loginData, update, setUpdate, isUpdateEnabled, setIsUpdateEnabled, multiImgName,
      mulImageArray, setMulImageArray, mulArray, setMulArray } = useContext(PostContext);
 
 
@@ -64,7 +95,7 @@ const EditBulletin = ({ props, route }) => {
 const [spinnerModalVisible, setSpinnerModalVisible] = useState(false);
   
 const toggleSwitch = () => {
-    setUpdateBulletin({...updateBulletin, status:!updateBulletin.status})
+    setUpdatePost({...updatePost, status:!updatePost.status})
   };
 
 
@@ -139,7 +170,7 @@ const toggleSwitch = () => {
             notifyMessage('Image Uploaded');
             setImage(image);
 
-            setUpdateBulletin({...updateBulletin, image: file});
+            setUpdatePost({...updatePost, image: file});
             setIsLoadingPickerImage(false);
             
           }).catch((err) => {
@@ -154,29 +185,29 @@ const toggleSwitch = () => {
   
   const changeCategory = (e) => {
 
-    setUpdateBulletin({
-      id: updateBulletin.id, category: e, title: updateBulletin.title, subtitle: updateBulletin.subtitle, youtube: updateBulletin.youtube, slug: updateBulletin.slug, body: updateBulletin.body,
-      image: updateBulletin.image, status: updateBulletin.status
+    setUpdatePost({
+      id: updatePost.id, category: e, title: updatePost.title, subtitle: updatePost.subtitle, youtube: updatePost.youtube, slug: updatePost.slug, body: updatePost.body,
+      image: updatePost.image, status: updatePost.status
     });
-    // alert(updateBulletin.category);
+    // alert(updatePost.category);
     // checkUpdateBtn();
   }
   const changeTitle = (e) => {
-    setUpdateBulletin({ id: updateBulletin.id, category: updateBulletin.category, title: e, subtitle: updateBulletin.subtitle, youtube: updateBulletin.youtube, slug: updateBulletin.slug, body: updateBulletin.body, image: updateBulletin.image, status: updateBulletin.status });
+    setUpdatePost({ id: updatePost.id, category: updatePost.category, title: e, subtitle: updatePost.subtitle, youtube: updatePost.youtube, slug: updatePost.slug, body: updatePost.body, image: updatePost.image, status: updatePost.status });
     // checkUpdateBtn();
   }
   const changeSubHeading = (e) => {
-    setUpdateBulletin({ id: updateBulletin.id, category: updateBulletin.category, title: updateBulletin.title, subtitle: e, youtube: updateBulletin.youtube,
-       slug: updateBulletin.slug, body: updateBulletin.body,
-       image: updateBulletin.image, status: updateBulletin.status });
+    setUpdatePost({ id: updatePost.id, category: updatePost.category, title: updatePost.title, subtitle: e, youtube: updatePost.youtube,
+       slug: updatePost.slug, body: updatePost.body,
+       image: updatePost.image, status: updatePost.status });
     // checkUpdateBtn();
   }
   
   
   const changeYoutube = (e) => {
-    setUpdateBulletin({ id: updateBulletin.id,
-      category: updateBulletin.category, title: updateBulletin.title, subtitle: updateBulletin.subtitle, youtube: e, slug: updateBulletin.slug,
-       body: updateBulletin.body, image: updateBulletin.image, status: updateBulletin.status
+    setUpdatePost({ id: updatePost.id,
+      category: updatePost.category, title: updatePost.title, subtitle: updatePost.subtitle, youtube: e, slug: updatePost.slug,
+       body: updatePost.body, image: updatePost.image, status: updatePost.status
     });
 
     // checkUpdateBtn();
@@ -185,18 +216,18 @@ const toggleSwitch = () => {
 
   const changeBody = (e) => {
     
-    setUpdateBulletin({ id: updateBulletin.id, category: updateBulletin.category, title: updateBulletin.title, subtitle: updateBulletin.subtitle, youtube: updateBulletin.youtube, slug: updateBulletin.slug,
-       body: e, image: updateBulletin.image, status: updateBulletin.status });
+    setUpdatePost({ id: updatePost.id, category: updatePost.category, title: updatePost.title, subtitle: updatePost.subtitle, youtube: updatePost.youtube, slug: updatePost.slug,
+       body: e, image: updatePost.image, status: updatePost.status });
     // checkUpdateBtn();
 
   }
   const changeSlug = (e) => {
-    setUpdateBulletin({ id: updateBulletin.id, category: updateBulletin.category, title: updateBulletin.title, subtitle: updateBulletin.subtitle, youtube: updateBulletin.youtube, slug: e, body: updateBulletin.body, image: updateBulletin.image, status: updateBulletin.status });
+    setUpdatePost({ id: updatePost.id, category: updatePost.category, title: updatePost.title, subtitle: updatePost.subtitle, youtube: updatePost.youtube, slug: e, body: updatePost.body, image: updatePost.image, status: updatePost.status });
     // checkUpdateBtn();
 
   }
   const changeStatus = (e) => {
-    setUpdateBulletin({ id: updateBulletin.id, category: updateBulletin.category, title: updateBulletin.title, subtitle: updateBulletin.subtitle, youtube: updateBulletin.youtube, slug: e, body: updateBulletin.body, image: updateBulletin.image, status: updateBulletin.status });
+    setUpdatePost({ id: updatePost.id, category: updatePost.category, title: updatePost.title, subtitle: updatePost.subtitle, youtube: updatePost.youtube, slug: e, body: updatePost.body, image: updatePost.image, status: updatePost.status });
     // checkUpdateBtn();
 
   }
@@ -356,6 +387,8 @@ const uploadMoreImage = async () => {
                 ])
 
                 .then((resp) => {
+                    
+
 
                       let newArr = resp.json();
                       setMulImages([...newArr.media]);
@@ -445,33 +478,9 @@ const uploadMoreImage = async () => {
     
     }
 
-  const editBulletin = async (id) => {
-
-    axios.post(GLOBAL.BASE_URL+'api/post/edit-bulletin/'+id)
-      .then(res => {
-        if(res.data.post !== null){
-          setSpinnerModalVisible(false);
-          
-        setUpdateBulletin({
-          id: res.data.post.id, category: res.data.post.category_id, title: res.data.post.title,
-          subtitle: res.data.post.subtitle, slug: res.data.post.slug, body: res.data.post.body,
-          youtube:res.data.post.youtube,
-          image: res.data.post.media, status: res.data.post.status==1?true:false, admin_id: 1
-        });
-        setMulImages(res.data.media);
-
-        }else{
-          notifyMessage('Record not found.');
-        }
-        
-      })
-      .catch(err => {
-          alert('Server Error - '+err);
-      })
-}
 
 
-  // const editBulletin = async (id) => {
+  // const editPost = async (id) => {
   //   try {
   //     const response = await fetch( GLOBAL.BASE_URL+'post/edit-post/'+id);
   //     var json = await response.json();
@@ -485,35 +494,23 @@ const uploadMoreImage = async () => {
 
 
   useEffect(() => {
-    
-
-    setSavingData(false);
-    // alert(JSON.stringify(mulImages));
-
+    // alert(id);
+    // setUpdatePost([]);
+    // alert(JSON.stringify(route.params.item));
+    setUpdateImage([]);
     setSpinnerModalVisible(true);
+
     setTimeout(() => {
-      editBulletin(id);
+      editNews(route.params.item.id);
     }, 500);
 
-    BackHandler.removeEventListener("hardwareBackPress", backAction);
-    
+    // setSpinnerModalVisible(true);
 
-    if(mul_images == null || mul_images == ''){ 
-      setMulArray([]);
-    }else{ 
-      const mulArrayTemp = mul_images.split(","); 
-      setMulArray(mulArrayTemp);
-    }
-    // alert(JSON.stringify(update));
+    // setUpdateImage([]);
+    // setIsUpdateEnabled(true);
+    // setBtnMoreImage(false);
 
-    // setSpinnerModalVisible(false);
-    setUpdateImage([]);
-    setIsUpdateEnabled(true);
-    setBtnMoreImage(false);
-
-
-  }, [id]);
-
+  }, [route.params.item.id]);
 
 
   return (
@@ -528,20 +525,20 @@ const uploadMoreImage = async () => {
 
           </>
         ) : null}
-        
-        {savingData == true ?
-          (
-            <>
-              {/* <ImageUploadModal spinnerText="Upload Multiple Image" /> */}
-              <SpinnerModal spinnerText="Saving Data..." />
-  
-            </>
-          ) : null}
+
+{savingData == true ?
+        (
+          <>
+            {/* <ImageUploadModal spinnerText="Upload Multiple Image" /> */}
+            <SpinnerModal spinnerText="Saving Data..." />
+
+          </>
+        ) : null}
 
       <Container style={styles.container}>
 
-        <HeaderBar title="Edit Bulletin" id={id} postType='editBulletin'
-        headerType="editBulletin" icon="document-text-outline" />
+        <HeaderBar title="Edit News" id={id} postType='editNews'
+        headerType="editNews" icon="document-text-outline" />
         
 
         <Content>
@@ -610,7 +607,7 @@ const uploadMoreImage = async () => {
                 <Text style={styles.imageBtnText}>Capture Image</Text>
 
               </TouchableOpacity>
-
+{/* 
               <TouchableOpacity
                 onPress={() => uploadMoreImage()}
                 style={[styles.imgButton,{backgroundColor:'whitesmoke'}]}
@@ -622,7 +619,7 @@ const uploadMoreImage = async () => {
 
                 <Text style={styles.imageBtnText}>More Images</Text>
               </TouchableOpacity>
-              
+               */}
 
             </View>
             </View>
@@ -636,53 +633,49 @@ const uploadMoreImage = async () => {
               >
                 <Text>Upload Start</Text>
             </TouchableOpacity> */}
-
+{/* 
 {mulImages !== null ? (
-                                <SafeAreaView style={{ flex: 1 }}>
-                                    <FlatList
-                                        data={mulImages}
-                                        renderItem={({ item, index }) =>
-                                            <View style={styles.GridViewContainer}>
-                                                {
-                                                    mulImages !== null ?
-                                                        (
-                                                            <>
-                                                                <View style={{ borderRadius: 40, padding: 4 }}>
-                                                                    <ImageBackground
-                                                                        style={[styles.imageThumbnail, { width: width / 4.9, borderWidth: 1, borderColor: 'silver' }]}
-                                                                        source={{ uri: GLOBAL.BASE_URL + `web/media/xs/` + item.image }}
-                                                                        imageStyle={{ borderRadius: 6 }}
-                                                                        key={index}
-                                                                    >
-                                                                        <TouchableOpacity 
-                                                                        style={{ position: 'absolute', bottom: 5, right: 5, backgroundColor: 'white', borderRadius: 4 }}
-                                                                        onPress={() => delMulImageNew(index, item.id, item.post_id, item.image)}>
-                                                                          <Ionicons
-                                                                              
-                                                                              name="trash-sharp"
-                                                                              color={GLOBAL.COLOR.DARK}
-                                                                              size={24}
-                                                                              key={index}
-                                                                              
-                                                                          />
-                                                                        </TouchableOpacity>
-                                                                    </ImageBackground>
-                                                                </View>
-                                                            </>
-                                                        ) : null
-                                                }
+              <SafeAreaView style={{ flex: 1 }}>
+                  <FlatList
+                      data={mulImages}
+                      renderItem={({ item, index }) =>
+                          <View style={styles.GridViewContainer}>
+                              {
+                            mulImages !== null ?
+                                (
+                                  <>
+                                  <View style={{ borderRadius: 40, padding: 4 }}>
+                                      <ImageBackground
+                                          style={[styles.imageThumbnail, { width: width / 4.9, borderWidth: 1, borderColor: 'silver' }]}
+                                          source={{ uri: GLOBAL.BASE_URL + `web/media/xs/` + item.image }}
+                                          imageStyle={{ borderRadius: 6 }}
+                                          key={index}
+                                      >
+                                      <Ionicons
+                                          style={{ position: 'absolute', bottom: 5, right: 5, backgroundColor: 'white', borderRadius: 4 }}
+                                          name="trash-sharp"
+                                          color={GLOBAL.COLOR.DARK}
+                                          size={24}
+                                          key={index}
+                                          onPress={() => delMulImageNew(index, item.id, item.post_id, item.image)}
+                                      />
 
-                                            </View>}
-                                        numColumns={4}
-                                    />
-                                    
-                                </SafeAreaView >
-                            ) : null
-                            }
+                                  </ImageBackground>
+                                  </View>
+                                  </>
+                                ) : null
+                              }
+
+                          </View>}
+                      numColumns={4}
+                  />
+                  
+              </SafeAreaView >
+          ) : null
+          } */}
 
             <View style={styles.item}>
               
-
               <Label style={styles.labelStyle}><Text style={styles.spanText}>* </Text>Category</Label>
               
               <View style={styles.textAreaContainer}>
@@ -693,7 +686,7 @@ const uploadMoreImage = async () => {
               iosHeader="Select your SIM"
               iosIcon={<Icon name="arrow-down" />}
               style={{ width: undefined }}
-              selectedValue={updateBulletin.category}
+              selectedValue={updatePost.category}
               onValueChange={(e) => changeCategory(e)}
               >
                         <Picker.Item label="Select Category" key={0} value={null} />
@@ -718,7 +711,7 @@ const uploadMoreImage = async () => {
                   name="title"
                   
                   onChangeText={(e)=>changeTitle(e)}
-                  defaultValue={updateBulletin.title}
+                  defaultValue={updatePost.title}
                   style={[styles.textArea, { height: 120 }]} rowSpan={5} bordered placeholder="Titlte of bulletin" />
               </View>
             </View>
@@ -729,7 +722,7 @@ const uploadMoreImage = async () => {
                 <TextInput
                   multiline={true}
                   editable= {true}
-                  defaultValue={updateBulletin.subtitle}
+                  defaultValue={updatePost.subtitle}
                   onChangeText={(e) => changeSubHeading(e)}
                   style={[styles.textArea, { height: 120 }]} rowSpan={5} bordered placeholder="Sub Heading of bulletin" />
               </View>
@@ -740,7 +733,7 @@ const uploadMoreImage = async () => {
               <View style={styles.textAreaContainer}>
                 <TextInput
                 editable= {true}
-                  defaultValue={updateBulletin.youtube}
+                  defaultValue={updatePost.youtube}
                   onChangeText={(e) => changeYoutube(e)}
                   style={styles.textArea} rowSpan={5} bordered placeholder="Youtube Link" />
               </View>
@@ -752,7 +745,7 @@ const uploadMoreImage = async () => {
                 <Input
                   multiline={true}
                   onChangeText={(e) => changeBody(e)}
-                  defaultValue={updateBulletin.body}
+                  defaultValue={updatePost.body}
                   style={[styles.textArea, { height: 260 }]} 
                   rowSpan={7} bordered placeholder="Buletin Body Details..." />
               </View>
@@ -764,7 +757,7 @@ const uploadMoreImage = async () => {
                 <Input
                 editable= {true}
                   onChangeText={(e) => changeSlug(e)}
-                  defaultValue={updateBulletin.slug}
+                  defaultValue={updatePost.slug}
                   style={[styles.textArea, { }]} rowSpan={5} bordered placeholder="Url Slug" />
 
 
@@ -777,10 +770,10 @@ const uploadMoreImage = async () => {
                     
                 <Switch
                   trackColor={{ false: "silver", true: 'silver' }}
-                  thumbColor={updateBulletin.status ? GLOBAL.COLOR.DARK : GLOBAL.COLOR.DARK}
+                  thumbColor={updatePost.status ? GLOBAL.COLOR.DARK : GLOBAL.COLOR.DARK}
                   ios_backgroundColor= {GLOBAL.COLOR.LIGHT}
                   onValueChange={()=>toggleSwitch()}
-                  value={updateBulletin.status}
+                  value={updatePost.status}
                 />
             </View> 
 
@@ -801,7 +794,7 @@ const uploadMoreImage = async () => {
             <TouchableOpacity 
               style={[styles.btnSubmit, isUpdateEnabled == true ? styles.btnSubmitEnable : styles.btnSubmitDisable]
                   }
-                onPress={() => updatePostFn('bulletin', updateBulletin)}
+                onPress={() => updatePostFn('bulletin', updatePost)}
                 disabled={isUpdateEnabled == true ? false : true}
               >
 
@@ -1020,4 +1013,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default EditBulletin;
+export default EditPost;

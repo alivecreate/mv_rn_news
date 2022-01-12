@@ -85,6 +85,8 @@ const PostDetailScreen = ({ props, route }) => {
     
     useEffect(() => {
 
+        
+
         // BackHandler.removeEventListener("hardwareBackPress", backAction);
 
         setIsLoadingPost(true);
@@ -113,7 +115,7 @@ const PostDetailScreen = ({ props, route }) => {
         }
         else if(route.params.item.type === 'news'){
             setScreenName("PostListScreen");
-            setScreenTitle("News Details");
+            setScreenTitle("News Details 0");
         }
 
         else{
@@ -232,6 +234,7 @@ const PostDetailScreen = ({ props, route }) => {
                                       <FlatList
                                                 data={postMulImageArray}
                                                 renderItem={({ item, index }) =>
+                                                    <View style={styles.GridViewContainer}>
 
                                                         {
                                                             postMulImageArray !== null ?
@@ -251,6 +254,7 @@ const PostDetailScreen = ({ props, route }) => {
                                                                     </>
                                                                 ) : null
                                                         }
+                                                    </View>
                                                 }
                                                 numColumns={3}
                                                 keyExtractor={(index) => index.toString()}

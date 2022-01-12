@@ -27,14 +27,15 @@ export const PostProvider = (props) => {
     
     const [postListData, setPostListData] = useState([]);
     const [postDetailData, setPostDetailData] = useState([]);
+    const [postDetailImage, setPostDetailImage] = useState([]);
+
+    const [bulletinDetailData, setBulletinDetailData] = useState([]);
     const [isLoadingPost, setIsLoadingPost] = useState(true);
 
     const [bulletinListData, setBulletinListData] = useState([]);
-    const [bulletinDetailData, setBulletinDetailData] = useState([]);
 
     const [btnMoreImage, setBtnMoreImage] = useState(false);
     const [pressnoteListData, setPressnoteListData] = useState([]);
-    // const [bulletinDetailData, setBulletinDetailData] = useState([]);
 
     const [intervalReq, setIntervalReq] = useState(true);
     
@@ -58,6 +59,8 @@ export const PostProvider = (props) => {
 
     const [isDeleting, setIsDeleting] = React.useState(false);
     
+    const [postMulImageArray, setPostMulImageArray] = useState([]);
+
     const [file, setFile] = React.useState(null);
     const [fileObj, setFileObj] = React.useState([]);
     const [fileArray, setFileArray] = React.useState([]);
@@ -236,32 +239,51 @@ const getJsonData = async () => {
       .then(res => {
           setTotalPressnote(res.data.totalPressnote);
 
-          
           setTotalNews(res.data.totalNews);
           setTotalBulletin(res.data.totalBulletin);
           setCategoryData(res.data.categories);
           setPostData(res.data.bulletinList10);
-          setPostListData(res.data.postList);
-          // setBulletinListData(res.data.bulletinList);
+          // setPostListData(res.data.postList);
           setPressnoteListData(res.data.pressnoteList);
           
           setIsLoadingPostData(false);
-          var newBulletinListData = bulletinListData;
 
+          var newBulletinListData = res.data.bulletinList;
+          setBulletinListData([...newBulletinListData]);
 
-          setBulletinListData(bulletinListData => [...res.data.bulletinList]);
-          notifyMessage('Data Refreshed');
+          var newPostListData = res.data.postList;
+          setPostListData([...newPostListData]);
+
+          // notifyMessage('Data Refreshed');
           // console.log(bulletinListData);
         })
       .catch(err => {
-        alert('getJSON ww4 5'+err + 'status-' + err.status + 'header- '+ err.headers);
+        alert('Network error: Something went wrong...');
       });
   }
 
+  const getBulletinDetailData = (id) =>{
+
+    const formData = new FormData();
+    formData.append('id', id);
+    axios.post(GLOBAL.BASE_URL+'api/post/get-post-detail',formData)
+      .then(res => {
+        if(res.data.post !== null){
+            setBulletinDetailData(res.data.post);
+            setIsLoadingPost(false);
+            // setPostMulImageArray(res.data.media);
+        }else{
+            setIntervalReq(false);
+        }
+      })
+      .catch(err => {
+          alert('Network Error : Please check internet or restart app.'+err);
+          setIsLoadingPost(false);
+      })
+}
 
 
 const getPostDetailData = (id) =>{
-  // alert('call'+id);
 
     const formData = new FormData();
     formData.append('id', id);
@@ -269,28 +291,19 @@ const getPostDetailData = (id) =>{
       .then(res => {
         if(res.data.post !== null){
             setPostDetailData(res.data.post);
-          //   const resPostBody = res.data.post.body;
-          //   const getPostBody = resPostBody.replace(/localhost:8000/gi, GLOBAL.IP);
-          //   setPostBody(getPostBody);
-            
+            setPostDetailImage(res.data.media);
             setIsLoadingPost(false);
-
-            // alert(JSON.stringify(res.data.post));
-
-          //  if(res.data.post.mul_images !== null){
-          //     // alert(JSON.stringify(res.data.post.mul_images));
-          //     const postMul_Images_Aray = res.data.post.mul_images.split(",");
-          //     setPostMul_Images(postMul_Images_Aray);
-          //  }else{
-          //    setPostMul_Images([]);
-          //  }
+            console.info(postDetailData);
+            // setPostMulImageArray(res.data.media);
+              
 
         }else{
             setIntervalReq(false);
         }
       })
       .catch(err => {
-          alert('post details err-  - '+err);
+          alert('Network Error : Please check internet or restart app.'+err);
+          setIsLoadingPost(false);
       })
 }
 
@@ -433,14 +446,14 @@ formData.append('admin_id', loginData.loginUserData.id.toString());
 
 axios.post(GLOBAL.BASE_URL+'api/post/store-post', formData)
 .then(res => {
-
+  alert(JSON.stringify(res.data));
   notifyMessage('Bulletin Submitted...');
   setSpinnerModalVisible(false);
   
-  getJsonData();
+  // getJsonData();
 
-    clearPost();
-    setMulArray([]);
+  //   clearPost();
+  //   setMulArray([]);
   }).catch((err) => {
     
 
@@ -510,6 +523,8 @@ async function updatePostNoImage(id) {
   setSpinnerModalVisible(false);
   console.log(resp.data);
   notifyMessage('no img');
+
+  getJsonData();
 
     clearPost();
     // ...
@@ -611,13 +626,13 @@ const savingDataFn = () =>{
 
 async function storeBulletin() {
   
+// alert(JSON.stringify(submit));
   
   let d = new Date();
   let timefileName = d.getTime();
  
-    var ext = /^.+\.([^.]+)$/.exec(updateImage.path);
+    var ext = /^.+\.([^.]+)$/.exec(image.path);
     var fileExt =  ext[1];
-    setSpinnerModalVisible(true);
 
     await RNFetchBlob.fetch('POST', GLOBAL.BASE_URL+'api/post/store-post', {
       Authorization : "Bearer access-token",
@@ -626,30 +641,33 @@ async function storeBulletin() {
     }, [
       { name : 'avatar', filename : timefileName+'.'+fileExt, 
        type:'avatar/'+fileExt,
-       data: updateImage.data,
+       data: image.data,
       },
 
-      { name : 'id', data : String(11)},
       { name : 'title', data : submit.title},
       { name : 'category', data: String(submit.category)},
       { name : 'subtitle', data: submit.subtitle},
       { name : 'youtube', data: submit.youtube?submit.youtube:'null'},
       { name : 'body', data: '<p>'+submit.body+'</p>'},
 
-      { name : 'mul_images', data: mulImageArray.toString()},
-      
       { name : 'slug', data: submit.slug},
       { name : 'status', data: submit.status==true?'1':'0'},
       { name : 'admin_id', data: loginData.loginUserData.id.toString()},
 
     ]).then((resp) => {
-      notifyMessage('Bulletin Submitted...'+resp.data);
-      // setSpinnerModalVisible(false);
-  
+      // console.info(JSON.stringify(resp.data));
+      notifyMessage('Bulletin Submitted...');  
+      getJsonData();
       setPostId(resp.data);
+      
+    setSpinnerModalVisible(true);
+      // setSpinnerModalVisible(false);
+      
+      // alert(resp.data);
     
       // alert(JSON.stringify(resp.data));
       // setSpinnerModalVisible(false);
+      clearPost();
     }).catch((error) => {
       // notifyMessage(JSON.stringify(resp));
 
@@ -680,42 +698,68 @@ async function finalMulImageUpload() {
 }
 
 
-async function updatePost() {
-  // alert(loginData.loginUserData.id.toString());
+async function updatePostFn(type, updateBulletin) {
+  // alert(JSON.stringify(updateBulletin));
+  setSavingData(true);
   let d = new Date();
   let timefileName = d.getTime();
  
+    
+  if(updateImage.path){
+    
     var ext = /^.+\.([^.]+)$/.exec(updateImage.path);
     var fileExt =  ext[1];
+    
+    let imageArr = {
+        name : 'avatar', filename : timefileName+'.'+fileExt, 
+       type:'avatar/'+fileExt,
+       data: updateImage.data,
+    }
+
+  }else{
+    // alert('not');
+    let imageArr = {
+        name : 'avatar', 
+        data: 'null',
+    }
+  }
+
+
     setSpinnerModalVisible(true);
     RNFetchBlob.fetch('POST', GLOBAL.BASE_URL+'api/post/update-post', {
       Authorization : "Bearer access-token",
       otherHeader : "foo",
       'Content-Type' : 'multipart/form-data'
     }, [
-      { name : 'avatar', filename : timefileName+'.'+fileExt, 
+      {  name : 'avatar', filename : timefileName+'.'+fileExt, 
        type:'avatar/'+fileExt,
        data: updateImage.data,
       },
 
-      { name : 'id', data : update.id.toString()},
-      { name : 'title', data : update.title},
-      { name : 'category', data: update.category.toString()},
-      { name : 'subtitle', data: update.subtitle},
-     { name : 'youtube', data: update.youtube?update.youtube:'null'},
-      { name : 'body', data: '<p>'+update.body+'</p>'},
-      { name : 'mul_images', data: mulArray.length==0?'null':mulArray.toString()},
-      { name : 'slug', data: update.slug},
-      { name : 'status', data: update.status==true?'1':'0'},
+      { name : 'id', data : updateBulletin.id.toString()},
+      { name : 'title', data : updateBulletin.title},
+      { name : 'category', data: updateBulletin.category.toString()},
+      { name : 'subtitle', data: updateBulletin.subtitle},
+      { name : 'youtube', data: updateBulletin.youtube?updateBulletin.youtube:'null'},
+      { name : 'body', data: '<p>'+updateBulletin.body+'</p>'},
+      { name : 'slug', data: updateBulletin.slug},
+      { name : 'status', data: updateBulletin.status==true?'1':'0'},
       { name : 'admin_id', data: loginData.loginUserData.id.toString()},
 
     ]).then((resp) => {
-      notifyMessage(JSON.stringify(resp.data));
+
+      setSavingData(false);
+      if(type == 'bulletin'){      
+        notifyMessage("Bulletin Updated");
+      }else{      
+        notifyMessage("News Updated");
+      }
+
+      getJsonData();
       setSpinnerModalVisible(false);
     }).catch((err) => {
+      setSavingData(false);
       setSpinnerModalVisible(false);
-      
-      // alert(JSON.stringify('errr00 = '+JSON.stringify(err)));
     })
 }
 
@@ -778,15 +822,22 @@ const uploadMultipleFiles = (e) => {
   
   const delPost = (id) => {
     setIsDeleting(true);
+
     const formData = new FormData();
     formData.append('id', id);
     axios.post(GLOBAL.BASE_URL + 'api/post/del-post', formData)
         .then(res => {
-            // alert(JSON.stringify(res.data.bulletinList));
+            // alert(JSON.stringify(res.data));
+            if(res.data == 'deleted'){
+              getJsonData();
+              notifyMessage('Item Deleted');
+            }
           // setBulletinListData(...bulletinListData, res.data.bulletinList);
 
-          // setModalVisible(!modalVisible);
-          // setIsDeleting(false);
+          setModalVisible(!modalVisible);
+          setIsDeleting(false);
+          setImage([]);
+          setUpdateImage([]);
                 
         })
         .catch(err => {
@@ -853,9 +904,8 @@ useEffect(() => {
   let isMounted = true
 // alert('data');
 
-        getJsonData();
-        
-  checkLoginFn();
+    getJsonData();
+    checkLoginFn();
   
 },[]);
 
@@ -863,18 +913,18 @@ useEffect(() => {
     return(
         <PostContext.Provider value={{ 
                 postData, postBody, setPostBody, setPostData, intervalReq, setIntervalReq, postListData, setPostListData, 
-                getPostDetailData,storePost, getPostData ,onShare, getPressnoteDetailData,postId, setPostId, clearData,
+                getPostDetailData, getBulletinDetailData, storePost, getPostData ,onShare, getPressnoteDetailData,postId, setPostId, clearData,
                 getJsonData, checkLoginFn, getLoginKey, loginData, setLoginData, signOut, postMul_Images, setPostMul_Images,
                 categoryData, setCategoryData,postDetailData, notifyMessage, setPostDetailData, modalVisible,
                 pressnoteListData, updatePressnote, isDeletingImage, setIsDeletingImage, finalMulImageUpload,
                 updateImage, setUpdateImage, storePressnote, spinnerNavigationModalVisible, setSpinnerNavigationModalVisible,
-                savingData, setSavingData,savingDataFn, 
+                savingData, setSavingData,savingDataFn, postMulImageArray, setPostMulImageArray, postDetailImage, setPostDetailImage,
                 totalPressnote, setTotalPressnote, totalNews, totalBulletin, storeBulletin, btnMoreImage, setBtnMoreImage,
                 update, setUpdate, clearPostUpdate, isUpdateEnabled, setIsUpdateEnabled, isDeleting, setIsDeleting,
                 setModalVisible, delPost,delPressnote, submit, setSubmit, image, setImage, mulImages, setMulImages, clearPost,
                 isSubmitEnabled, setIsSubmitEnabled, bulletinListData, setBulletinListData, bulletinDetailData,
-                isLoadingPost, setIsLoadingPost, setBulletinDetailData, isLoadingPostData, setIsLoadingPostData,
-                updatePost, updatePostNoImage, spinnerModalVisible, setSpinnerModalVisible, multiImgName, setMultiImgName,
+                isLoadingPost, setIsLoadingPost,bulletinDetailData, setBulletinDetailData, isLoadingPostData, setIsLoadingPostData,
+                updatePostFn, updatePostNoImage, spinnerModalVisible, setSpinnerModalVisible, multiImgName, setMultiImgName,
                 mulImageArray, setMulImageArray, mulArray, setMulArray, notificationArray, setNotificationArray
             }}>
             {props.children}

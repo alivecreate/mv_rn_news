@@ -11,9 +11,10 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import HTML from "react-native-render-html";
 
+import { Header } from 'react-native-elements';
 import HtmlReader from '../Html/HtmlReader';
 
-import HeaderBar from '../Header/HeaderBar'
+import HeaderBar, {BackButton, ScreenTitle, DeleteButton} from '../Header/HeaderBar'
 import PostDeleteModel from '../Posts/PostDeleteModel';
 import { useNavigation } from '@react-navigation/native';
 import Spinner from '../Widget/Spinner';
@@ -36,9 +37,8 @@ const PressnoteDetail = ({props, route}) => {
     
 
     useEffect(() => {
-        
 
-        setIsLoadingPost(true);
+        setIsLoadingPost(false);
         // getPressnoteDetailData(id);
     
     // var postMulImages = [];
@@ -105,9 +105,15 @@ return (
     
          {postDetailData !== null? 
          (
-             <>
-             <HeaderBar title={postDetailData.type == 'bulletin'?'Bulletin Details':'Pressnote Details110'+id} headerType="postDetail" id={id}  
-             postType={postDetailData.type}   icon="document-text-outline" />
+             <>  
+            <Header
+                statusBarProps={{ backgroundColor: GLOBAL.COLOR.DARK, barStyle: 'light-content' }}
+                leftComponent={<BackButton />}
+                centerComponent={<ScreenTitle icon="document-text-outline" title="Pressnote Detail" />}
+                rightComponent={<DeleteButton id={postDetailData.id} postType="pressnote" />}
+                containerStyle={styles.headerBar}
+            />
+             
  
         <View style={[styles.container]}>
             
@@ -201,6 +207,12 @@ return (
 }
 
 const styles = StyleSheet.create({
+    
+    headerBar: {
+        backgroundColor: GLOBAL.COLOR.LIGHT,
+        justifyContent: 'space-around',
+
+    },
     vw: {
         justifyContent: "center",
         alignItems: "center",

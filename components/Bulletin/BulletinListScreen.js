@@ -21,9 +21,11 @@ const BulletinListScreen = (props) => {
 
     const navigation = useNavigation();
     const {  bulletinListData, onShare, loginData, setSpinnerModalVisible } = useContext(PostContext);
+    
+
     useEffect(() => {
-        setSpinnerModalVisible(false);
-    })
+        
+    }, []);
 
     return (
         loginData.loginStatus === 'login'?(
@@ -50,13 +52,20 @@ const BulletinListScreen = (props) => {
                 return(
 
         <View key={item.id}  style={[styles.tableContainer, { backgroundColor: tableBgColor }]}>
+        
+
         <Text style={[styles.tableText, {
-            fontSize: 17, color: tableTextNoColor, fontWeight: 'bold',
+            fontSize: 15, color: tableTextNoColor, fontWeight: 'bold',
             textAlign: 'center', backgroundColor: tableBgNoColor, flex: 1.5
-        }]}>{item.id}</Text>
+        }]}>{index + 1}</Text>
 
 
-        <Text style={[styles.tableText, { flex: 19, }]}>{item.title}</Text>
+        <Image style={[styles.image, { flex: 1,  flex: 4,height: 80, borderRadius: 2, marginRight: 5 }]}
+            source={{ uri: GLOBAL.BASE_URL + `web/media/xs/` + item.image }} />
+
+
+        <Text style={[styles.tableText, { flex: 14, }]}>{item.title}</Text>
+
         <View style={[styles.tableButtonContainer, { alignSelf: 'center', flex: 2, }]} >
             <TouchableOpacity style={[styles.buttonIcon, { backgroundColor: 'tomato' }]}
                 onPress={() => navigation.navigate("EditBulletin", {item} )}
@@ -65,13 +74,14 @@ const BulletinListScreen = (props) => {
             </TouchableOpacity>
 
             <TouchableOpacity style={[styles.buttonIcon, { backgroundColor: 'black' }]}
-                onPress={() => navigation.navigate("PostDetailScreen",  {item})}
+                onPress={() => navigation.navigate("BulletinDetailScreen",  {item})}
             >
                 <Ionicons name="ios-eye-outline"
                     color="white"
                     size={20}
                 />
             </TouchableOpacity>
+
             <TouchableOpacity style={[styles.buttonIcon, { backgroundColor: 'white' }]}
                 onPress={() => onShare(GLOBAL.BASE_URL + 'news/' + item.slug, item.title, item.subtitle)}
             >
@@ -154,7 +164,7 @@ const styles = StyleSheet.create({
         marginTop:10,
     },
     tableText:{
-        fontSize:19,
+        fontSize:17,
         marginHorizontal:2,
         paddingHorizontal:4,
         fontWeight:'600',

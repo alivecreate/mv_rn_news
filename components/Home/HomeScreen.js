@@ -31,7 +31,11 @@ const GLOBAL = require('../Global');
 
 const HomeScreen = (props) => {
     const navigation = useNavigation();
-    const { getJsonData, totalNews, totalBulletin,spinnerNavigationModalVisible, setSpinnerNavigationModalVisible,
+    
+
+    const { getJsonData, totalNews, totalBulletin,spinnerNavigationModalVisible,
+        
+        setSpinnerNavigationModalVisible,
         totalPressnote, getLoginKey, loginData, spinnerModalVisible, setSpinnerModalVisible,
         setIsLoadingPostData } = useContext(PostContext);
 
@@ -56,7 +60,6 @@ const HomeScreen = (props) => {
     
 
     useEffect(() => {
-        
 
         const backAction = () => {
             Alert.alert("Close App!", "Are you sure you want to close?", [
@@ -78,7 +81,7 @@ const HomeScreen = (props) => {
       
           return () => backHandler.remove();
 
-    }, []);
+    });
 
     return (
         loginData.loginStatus === 'login' ? (
@@ -87,7 +90,7 @@ const HomeScreen = (props) => {
                 <Header
                     statusBarProps={{ backgroundColor: GLOBAL.COLOR.DARK, barStyle: 'light-content' }}
                     leftComponent={<LeftMenu />}
-                    centerComponent={<ScreenTitle icon='document-text-outline' title='DASHBOARD' />}
+                    centerComponent={<ScreenTitle icon='document-text-outline' title='Dashboard' />}
                     // rightComponent={{ type :'ionicon', icon: 'ios-ellipsis-vertical-sharp', color: 'white' ,size:25}}
                     containerStyle={styles.headerBar}
                 />

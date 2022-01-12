@@ -93,6 +93,13 @@ const PostDetailScreen = ({props, route}) => {
         getPostDetailData(id);
         
 
+        const backHandler = BackHandler.addEventListener(
+            "hardwareBackPress",
+            backAction
+          );
+      
+          return () => backHandler.remove();
+          
             // const interval = setInterval(function(){
             //     getPostDetailData(id);
                 

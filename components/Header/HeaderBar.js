@@ -34,11 +34,7 @@ export const ScreenTitle = (props) => {
 }
 export const LeftMenu = () => {
     const navigation = useNavigation();
-    const [searchQuery, setSearchQuery] = React.useState('');
 
-    const onChangeSearch = (query) => {
-        setSearchQuery(query);
-    }
     return (
         <>
             <Ionicons name="menu" size={25}
@@ -126,8 +122,8 @@ export const DeleteButton = (props) => {
     //         })
     // }
 
-    const delPostModal = (id) =>{
-        Alert.alert("Delete Post!", "Are you sure you want to close?", [
+    const delPostModal = (id, message = 'Delete Item') =>{
+        Alert.alert(message, "Are you sure you want to close?", [
             {
               text: "Cancel",
               onPress: () => null,
@@ -158,48 +154,6 @@ export const DeleteButton = (props) => {
 
     return (
         <>
-            {/* <Modal
-                animationType="slide"
-                transparent={true}
-                visible={modalVisible}
-                onRequestClose={() => {
-                    Alert.alert("Modal has been closed.");
-                }}
-            >
-                <View style={styles.centeredView}>
-                    <View style={styles.modalView}>
-                        {isDeleting ?
-                            (<>
-                                <SpinnerModal spinnerText="Deleting Artical..." />
-                            </>
-                            ) : (
-                                <>
-                                    <Text style={styles.modalText}>Are you sure want to delete this post?</Text>
-                                    <View style={{ flex: 1, flexDirection: 'row', alignContent: 'space-between' }}>
-                                        <TouchableHighlight
-                                            style={{ ...styles.openButton, backgroundColor: GLOBAL.COLOR.DARK }}
-                                            onPress={() => {delModal(props.id)}}
-                                        >
-                                            <Text style={styles.textStyle}><Ionicons name="trash-outline" size={22} /> DELETE</Text>
-                                        </TouchableHighlight>
-
-                                        <TouchableHighlight
-                                            style={{ ...styles.openButton, backgroundColor: GLOBAL.COLOR.BLACK, }}
-                                            onPress={() => {
-                                                setModalVisible(!modalVisible);
-                                            }}
-                                        >
-                                            <Text style={styles.textStyle}><Ionicons name="close" size={22} /> CANCEL</Text>
-                                        </TouchableHighlight>
-                                    </View>
-                                </>
-                            )
-                        }
-
-                    </View>
-                </View>
-            </Modal> */}
-
             
         {isDeleting ?
             (<>
@@ -207,28 +161,28 @@ export const DeleteButton = (props) => {
             </>
             ) : (
                 <>
+                
+                <TouchableOpacity 
+                    style={{ backgroundColor: 'white', borderRadius: 4 }}
+                    onPress={() => {
+                        props.postType=='post'?(
+                            delPostModal(props.id)
+                        ):(
+                            delPressnoteModal(props.id)
+                        )
+                    }}
+
+                    >
                 <Ionicons name="trash-outline" size={24}
                     style={{
                         color: 'red', backgroundColor: 'white',
                         padding: 1, borderRadius: 5
                     }}
                     color='white'
-                    // onPress={() => {setModalVisible(true)}}
-                    
-
-                            onPress={() => {
-                                
-                    
-                                props.postType=='post'?(
-                                    delPostModal(props.id)
-                                ):(
-                                    delPressnoteModal(props.id)
-
-                                )
-                            }}
-
-
                 ></Ionicons>
+                
+                </TouchableOpacity>
+
             </>
             )}
 
@@ -248,7 +202,7 @@ const HeaderBar = (props) => {
                     statusBarProps={{ backgroundColor: GLOBAL.COLOR.DARK, barStyle: 'light-content' }}
                     leftComponent={<LeftMenu />}
                     centerComponent={<ScreenTitle icon={props.icon} title={props.title} />}
-                    // rightComponent={{ type :'ionicon', icon: 'ios-ellipsis-vertical-sharp', color: 'white' ,size:25}}
+                    rightComponent={{ type :'ionicon', icon: 'ios-ellipsis-vertical-sharp', color: 'white' ,size:25}}
                     containerStyle={styles.headerBar}
                 />
             </>
@@ -289,10 +243,39 @@ const HeaderBar = (props) => {
         )
     }
 
+    else if (props.headerType === 'editBulletin') {
+        return (
+            <Header
+                statusBarProps={{ backgroundColor: GLOBAL.COLOR.DARK, barStyle: 'light-content' }}
+                leftComponent={<BackButton screen="BulletinListScreen" />}
+                centerComponent={<ScreenTitle icon='document-text-outline'
+                    title="Edit Bulletin" />}
+                rightComponent={<DeleteButton id={props.id} message="Delete Item" postType='post' />}
+                containerStyle={styles.headerBar}
+
+            />
+        )
+    }
+
+    else if (props.headerType === 'editNews') {
+        return (
+            <Header
+                statusBarProps={{ backgroundColor: GLOBAL.COLOR.DARK, barStyle: 'light-content' }}
+                leftComponent={<BackButton screen="PostListScreen" />}
+                centerComponent={<ScreenTitle icon='document-text-outline'
+                    title="Edit News" />}
+                rightComponent={<DeleteButton id={props.id} message="Delete Item" postType='post' />}
+                containerStyle={styles.headerBar}
+
+            />
+        )
+    }
+
+    
 }
 
-export default HeaderBar;
 
+export default HeaderBar;
 
 const styles = StyleSheet.create({
     headerBar: {
