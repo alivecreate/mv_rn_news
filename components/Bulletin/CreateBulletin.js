@@ -39,7 +39,8 @@ import Login from '../Auth/Login';
 
 const CreateBulletin = () => {
 
-  const { categoryData, storePost, clearPost, loginData, storeBulletin, btnMoreImage, setBtnMoreImage,
+  const { categoryData, storePost, clearPost, loginData, storeBulletin,
+     btnMoreImage, setBtnMoreImage,
     notifyMessage, submit, setSubmit, image, setImage, mulImages, setMulImages,
      isSubmitEnabled, setIsSubmitEnabled, updateImage, setUpdateImage, clearData,
     spinnerModalVisible, multiImgName, setMultiImgName, setSpinnerModalVisible,
@@ -66,14 +67,6 @@ const CreateBulletin = () => {
 
   };
 
-  const delMulImage = (index) => {
-
-    var array = [...mulImages];
-    var pos = array.indexOf(index);
-    array.splice(index, 1);
-    setMulImages(array);
-  }
-
 
 
   const pickSingleWithCamera = (cropping, mediaType = 'photo') => {
@@ -96,6 +89,8 @@ const CreateBulletin = () => {
         var timefileName = d.getTime();
         let file = timefileName+'_'+Math.floor(Math.random() * 99)+i+'.'+fileExt;
         
+        setUpdateImage(image);
+
         RNFetchBlob.fetch('POST', GLOBAL.BASE_URL+'api/post/test-multiple', {
           Authorization : "Bearer access-token",
           otherHeader : "foo",
@@ -109,9 +104,7 @@ const CreateBulletin = () => {
           },
               
           ]).then((resp) => {
-            alert(JSON.stringify(resp.data));
-            console.log(JSON.stringify(resp.data));
-            alert('success--- '+JSON.stringify(resp.data));
+            notifyMessage('Image Uploaded');
             setImage(image);
 
             setSubmit({...submit, image: file});
@@ -123,10 +116,10 @@ const CreateBulletin = () => {
             alert('Network Error, Please Try Again.'+JSON.stringify(resp.data));
             console.log(JSON.stringify(resp.data));
           })
-
     })
     .catch((e) => notifyMessage('Failed... Please Upload Again.'));
   }
+  
   const pickSingleBase64 = (cropit) => {
     
     setIsLoadingPickerImage(true);
@@ -141,40 +134,15 @@ const CreateBulletin = () => {
 
       .then((image) => {
         const newupdateImage = { uri: `data:${updateImage.mime};base64,` + updateImage.data, width: updateImage.width, height: updateImage.height };
-        setUpdateImage(image);
-      setIsLoadingPickerImage(false);
+        setImage(image);
+        setIsLoadingPickerImage(false);
 
 
       })
       .catch((e) => alert(e));
   }
-  const convertStringFromState = (dataArray) => {
-    
-    // console.log('mul string arr ='+JSON.stringify(dataArray));
-
-    var i;
-
-    for(i  = 0; i < dataArray.length ; i++){
-      var ext = /^.+\.([^.]+)$/.exec(dataArray[0].uri);
-      var fileExt =  ext[1];
-      let file = multiImgName+'_'+Math.floor(Math.random() * 99)+i+'.'+fileExt;
-      var newFileNames = fileNames;
-      newFileNames.push(file); 
-    // console.log('mul string arr ='+JSON.stringify(dataArray));
-    }
-    
-    setFileNames([...newFileNames]);
-
-    // setMulImageArray([...newMulImageArray]);
-
-    // console.log('final mul-' + fileNames);
-
   
-  }
 
-  const testAlert = (msg) =>{
-      alert(msg);
-  }
   
   const finalMulImageUpload = (cropit) => {
     // alert('uploaded');
@@ -188,7 +156,6 @@ const CreateBulletin = () => {
                   includeExif: true,
                 })
     .then((images) => {
-
 
       const imageData = images.map((i) => {
         var newFileName = i.path.substring(i.path.lastIndexOf('/') + 1);
@@ -386,118 +353,10 @@ const CreateBulletin = () => {
 
   }
 
-  const delMulImageNew2 = (index,item) =>{
-
-    var newMulImages = mulImages;
-    newMulImages.splice(index, 1);
-    setMulImages([...newMulImages]);
-
-    // alert(JSON.stringify(mulImageArray));
-
-    // alert(mulImageArray);
-    // var delArray = mulImageArray.split(",");
-
-    // var array = [...mulImageArray]; // make a separate copy of the array
-    // var index = array.indexOf(index)
-    // if (index !== -1) {
-    //   array.splice(index, 1);
-    //   setMulImageArray(array);
-    // }
-
-
-    // delArray.splice(index, 1);
-    // mulImageArray(delArray);
-
-    // console.log(delArray);
-    // alert(delArray);
-
-  //   if(mulImageArray.length == 0){
-  //     alert(delArray.length);
-  //   }
-  //   else{
-  //   var delArray = mulImageArray.split(",");
-  //  }
-
-    // var array = [...mulImages]; 
-    // array.splice(index, 1);
-
-    // var array2 = [...mulImageArray];
-    // // mulImageArray.splice(index, 1);
-    // array2.splice(index);
-
-    // // mulImageArray.splice(index, 2); 
-    // setMulImageArray(mulImageArray);
-
-    
-  // var array = [...mulImages]; 
-  // array.splice(index, 1);
-  // setMulImages(array);
-  //   let i =0;
-    
-  // for(i; i <= array.length ; i++){
-    
-  //   var ext = /^.+\.([^.]+)$/.exec(array[i].uri);
-  //   var fileExt = ext[1];
-  //   let file = multiImgName + '_' + Math.floor(Math.random() * 99) + i + '.' + fileExt;
-
-  //   // alert(mulImageArray.length);
-  //   // mulImageArray.push(file.toString());
-
-  //   console.log(array[i]);
-
-  // }
-  
-  
-
-  // var array2 = [...mulImageArray]; 
-  // array2.splice(index, 1);
-  // setMulImageArray(array2);
-  
-    
-
-    // alert('arr i '+JSON.stringify(delArray[index]));
-
-    // console.log(JSON.stringify(delArray[index])+ 'all= '+ mulImageArray);
-    // console.log('–––––––––––––––––––––––––––––––––––');
-
-    // RNFetchBlob.fetch('POST', GLOBAL.BASE_URL + 'api/post/mob-media-delete-unsaved', {
-    //   Authorization: "Bearer access-token",
-    //   otherHeader: "foo",
-    //   'Content-Type': 'multipart/form-data',
-    // }, [
-    //   { name : 'item', data : delArray[index]},
-    // ])
-    // .then((resp) => {
-      
-    //   var array = [...mulImages]; 
-    //   array.splice(index, 1);
-
-    //   var array2 = [...mulImageArray];
-    //   array2.splice(index, 1);
-      
-    //   // alert('str - '+JSON.stringify(mulImageArray) + 'arr - '+ JSON.stringify(mulImageArray.toString()));
-    //   // alert(JSON.stringify(mulImageArray.toString()));
-    //   console.log('Main Array : ' + mulImageArray);
-    //   console.log('Deleted Item: ' + JSON.stringify(delArray[index]));
-    //   console.log('After Deleted Arr: ' + JSON.stringify(array));
-
-    //   // setMulImageArray(array.toString());
-    //   setMulImageArray(JSON.stringify(mulImageArray.toString()));
-      
-    //   setMulImages(array);
-
-    //   // alert(JSON.stringify(delArray));
-
-    //   notifyMessage(JSON.stringify(resp.data));
-    //   // console.log(JSON.stringify(mulImageArray));
-    // }).catch((err) => {
-    //   alert('eerr--' +JSON.stringify(err));
-    // })
-  }
 
   const checkSubmitBtn = () => {
 
-    if ((Array.isArray(updateImage) || updateImage.length === 0 || 
+    if ((Array.isArray(image) || image.length === 0 || 
     submit.category === '' || submit.category === null|| 
     submit.title === '' || submit.subtitle === ''
       || submit.body === '' || submit.slug === '')) {
@@ -548,13 +407,16 @@ const CreateBulletin = () => {
   }
 
   useEffect(() => {
-    // alert('status- ' + submit.status);
+    // alert('user data - ' + JSON.stringify(loginData.loginUserData.email));
+
     setFileNames([]);
     setIsLoading(false);
-    setSpinnerModalVisible(false);
+    // setSpinnerModalVisible(true);
     setIsLoading(false);
     setBtnMoreImage(false);
     setUpdateImage([]);
+    clearPost();
+
 
 
     // alert(JSON.stringify(categoryData));
@@ -590,7 +452,7 @@ const CreateBulletin = () => {
     loginData.loginStatus === 'login'?(
     <>
 
-      {spinnerModalVisible == true ?
+      {spinnerModalVisible ?
         (
           <>
             <ImageUploadModal spinnerText="Upload Multiple Image" />
@@ -617,7 +479,7 @@ const CreateBulletin = () => {
             <View style={{ flex: 1, margin: 10, }}>
 
               <Image
-                source={updateImage.path ? { uri: updateImage.path } : require('../../assets/no-img-xs.png')}
+                source={image.path ? { uri: image.path } : require('../../assets/no-img-xs.png')}
                 style={{ flex: 1, borderWidth: 2, height: width / 5, margin: 4, borderColor: 'black', borderRadius: 4 }}
               />
 
@@ -676,6 +538,7 @@ const CreateBulletin = () => {
                 onPress={() => setSpinnerModalVisible(!spinnerModalVisible)}
                 style={[styles.imgButton,{backgroundColor:'whitesmoke'}]}
               >
+                
                 <Ionicons name="md-camera-outline"
                   color="black"
                   size={32}
@@ -731,12 +594,13 @@ const CreateBulletin = () => {
               <Label style={styles.labelStyle}><Text style={styles.spanText}>* </Text>Title</Label>
               <View style={styles.textAreaContainer}>
                 <TextInput
+                  multiline={true}
                   editable={true}
                   name="title"
                   
                   onChangeText={(e)=>changeTitle(e)}
                   defaultValue={submit.title}
-                  style={styles.textArea} rowSpan={5} bordered placeholder="Titlte of bulletin" />
+                  style={[styles.textArea, { height: 120 }]} rowSpan={5} bordered placeholder="Titlte of bulletin" />
               </View>
             </View>
 
@@ -748,7 +612,7 @@ const CreateBulletin = () => {
                   editable= {true}
                   defaultValue={submit.subtitle}
                   onChangeText={(e) => changeSubHeading(e)}
-                  style={styles.textArea} rowSpan={5} bordered placeholder="Sub Heading of bulletin" />
+                  style={[styles.textArea, { height: 120 }]} rowSpan={5} bordered placeholder="Sub Heading of bulletin" />
               </View>
             </View>
 
@@ -770,7 +634,7 @@ const CreateBulletin = () => {
                   multiline={true}
                   onChangeText={(e) => changeBody(e)}
                   defaultValue={submit.body}
-                  style={[styles.textArea, { height: 150 }]} rowSpan={5} bordered placeholder="Buletin Body Details..." />
+                  style={[styles.textArea, { height: 260 }]} rowSpan={5} bordered placeholder="Buletin Body Details..." />
               </View>
             </View>
 
@@ -819,7 +683,7 @@ const CreateBulletin = () => {
               
             <TouchableOpacity style={[styles.btnSubmit, isSubmitEnabled == true ? styles.btnSubmitEnable : styles.btnSubmitDisable]
                   }
-                onPress={() => storeBulletin()}
+                onPress={() => {storeBulletin(), setSpinnerModalVisible(true)}}
                 disabled={isSubmitEnabled == true ? false : true}
               >
 

@@ -1,68 +1,45 @@
-import React, { Component,useEffect, useState, useContext } from 'react'
+import React, { Component, useState, useEffect, useContext } from 'react'
 import PostContext from '../Data/PostContext';
 
-import { View, Text, StyleSheet, Image, Dimensions,
-    BackHandler,
-    FlatList, ScrollView, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, Image, Dimensions, FlatList, ScrollView, TouchableOpacity } from 'react-native'
 
 import axios from 'axios';
-import { useNavigation, StackActions } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 const { width, height } = Dimensions.get('window');
+
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 
 
 import { Header } from 'react-native-elements';
-import DataItemTable from '../Widget/DataItemTable';
-
 import {BackButton, LeftMenu, ScreenTitle } from '../Header/HeaderBar'
 
-import Login from '../Auth/Login';
-// import PostDetailScreen from './PostDetailScreenTest'
 const GLOBAL = require('../Global');
-
-const popAction = StackActions.pop(1);
-
-    
+import Login from '../Auth/Login';
 
 const PostListScreen = (props) => {
 
     const navigation = useNavigation();
-    const { postListData, onShare, loginData, setSpinnerModalVisible } = useContext(PostContext);
-
-    const backAction = () => {
-        // alert('ggg');
-// navigation.dispatch(popAction);
-        navigation.navigate("HomeScreen");
-        return false;
-    };
+    const {  bulletinListData, postListData, onShare, loginData, setSpinnerModalVisible } = useContext(PostContext);
     
     useEffect(() => {
-        setSpinnerModalVisible(false);
+        // setSpinnerModalVisible(false);
         
-        // BackHandler.addEventListener("hardwareBackPress", backAction);
-        // return () =>
-        //     BackHandler.removeEventListener("hardwareBackPress", backAction);
-
-    })
+    },[]);
 
     return (
         loginData.loginStatus === 'login'?(
         <>
-        {/* <HeaderBar title="NEWS LIST"  headerType="postList"  icon="document-text-outline"/> */}
-        
+       
         <Header
                 statusBarProps={{ backgroundColor: GLOBAL.COLOR.DARK, barStyle: 'light-content' }}
                 leftComponent={<BackButton screen="HomeScreen" />}
-                
-                centerComponent={<ScreenTitle icon='document-text-outline' title='NEWS LIST' />}
+                centerComponent={<ScreenTitle icon='ios-create-outline' title='News List' />}
                 // rightComponent={{ type :'ionicon', icon: 'cart', color: 'white' ,size:25}}
                 containerStyle={styles.headerBar}
             />
 
-
         <View style={[styles.container]}>
-            
         <View style={[styles.content,{
             marginHorizontal:0, paddingVertical:0,flex:5}]}>
                 
@@ -71,89 +48,50 @@ const PostListScreen = (props) => {
                 const tableBgColor = index % 2 == 0 ?'white':'whitesmoke';
                 const tableTextNoColor = index % 2 == 0 ?'black':'black';
                 const tableBgNoColor = index % 2 == 0 ?'whitesmoke':'white';
-                    return(
+                    
+                return(
 
-                        <View style={[styles.tableContainer, { backgroundColor: tableBgColor }]}>
-                        <Text style={[styles.tableText, {
-                            fontSize: 17, color: tableTextNoColor, fontWeight: 'bold',
-                            textAlign: 'center', backgroundColor: tableBgNoColor, flex: 1.5
-                        }]}>{index + 1}</Text>
-            
-                        <Image style={[styles.image, { flex: 3, height: 50, borderRadius: 2, marginRight: 5, marginTop: 20 }]}
-                            source={{ uri: item.source }}
-                        />
-            
-                        <Text style={[styles.tableText, { flex: 19, }]}>{item.title}</Text>
-                        <View style={[styles.tableButtonContainer, { alignSelf: 'center', flex: 2, }]} >
-                            <TouchableOpacity style={[styles.buttonIcon, { backgroundColor: 'tomato' }]}
-                                onPress={() => navigation.navigate("EditBulletin", {item} )}
-                            >
-                                <Icon name="comment-edit-outline" color="white" size={20} />
-                            </TouchableOpacity>
-            
-                            <TouchableOpacity style={[styles.buttonIcon, { backgroundColor: 'black' }]}
-                                onPress={() => navigation.navigate("PostDetailScreen",  {item})}
-                                >
-                                <Ionicons name="ios-eye-outline"
-                                    color="white"
-                                    size={20}
-                                />
-                            </TouchableOpacity>
-                            <TouchableOpacity style={[styles.buttonIcon, { backgroundColor: 'white' }]}
-                                onPress={() => onShare(GLOBAL.BASE_URL + 'news/' + item.slug, item.title, item.subtitle)}
-                            >
-                                <Ionicons name="share-social"
-                                    color={GLOBAL.COLOR.DARK}
-                                    size={20}
-                                />
-                            </TouchableOpacity>
-                        </View>
-                    </View>
+        <View key={item.id}  style={[styles.tableContainer, { backgroundColor: tableBgColor }]}>
         
-        
-                        // <DataItemTable source={GLOBAL.BASE_URL + `web/media/xs/` + item.image} key={item.id} item={item} 
-                        //    index={index} tableBgColor={tableBgColor} tableTextNoColor={tableTextNoColor} tableBgNoColor={tableBgNoColor}
-                        // />
+
+        <Text style={[styles.tableText, {
+            fontSize: 15, color: tableTextNoColor, fontWeight: 'bold',
+            textAlign: 'center', backgroundColor: tableBgNoColor, flex: 1.5
+        }]}>{index + 1}</Text>
 
 
-                // <View style={[styles.tableContainer,{backgroundColor: tableBgColor}]} key = {item.id}>
-                        
-                //         {/* {const tableBgColor = index % 2 == 0 ?'#636e72':'red';} */}
-                        
-                //         <Text style={[styles.tableText,{fontSize:17, color:tableTextNoColor,fontWeight:'bold',
-                //             textAlign:'center',backgroundColor: tableBgNoColor, flex:1.5}]}>{index + 1 }</Text>
-                            
-                //         <Image style={[styles.image,{flex:3, height:50,borderRadius:2,marginRight:5, marginTop:20}]}
-                //                         source={{ uri: GLOBAL.BASE_URL + `web/media/xs/` + item.image }}
-                //         />
+        <Image style={[styles.image, { flex: 1,  flex: 4,height: 80, borderRadius: 2, marginRight: 5 }]}
+            source={{ uri: GLOBAL.BASE_URL + `web/media/xs/` + item.image }} />
 
-                //         <Text style={[styles.tableText,{flex:19,}]}>{item.title}</Text>
-                //         <View  style={[styles.tableButtonContainer,{ alignSelf:'center',flex:2,}]} >
 
-                //             {/* <TouchableOpacity style={[styles.buttonIcon,{backgroundColor:'tomato'}]} >
-                                
-                //             <Icon name="comment-edit-outline" color="white" size={20} />
-                //             </TouchableOpacity> */}
+        <Text style={[styles.tableText, { flex: 14, }]}>{item.title}</Text>
 
-                //             <TouchableOpacity  style={[styles.buttonIcon,{backgroundColor:'black'}]}
-                //                 onPress={() =>  navigation.navigate("PostDetailScreen", { item })}>
-                                
-                //             <Ionicons name="ios-eye-outline"
-                //                             color="white"
-                //                             size={20}
-                //                             />
-                //             </TouchableOpacity>       
-                            
-                //             <TouchableOpacity style={[styles.buttonIcon, { backgroundColor: 'white' }]}
-                //                         onPress={() =>  onShare(GLOBAL.BASE_URL+'news/'+item.slug, item.title, item.subtitle)}
-                //                         >
-                //                             <Ionicons name="share-social"
-                //                                 color={GLOBAL.COLOR.DARK}
-                //                                 size={20}
-                //                             />
-                //             </TouchableOpacity>           
-                //         </View>
-                // </View>
+        <View style={[styles.tableButtonContainer, { alignSelf: 'center', flex: 2, }]} >
+            <TouchableOpacity style={[styles.buttonIcon, { backgroundColor: 'tomato' }]}
+                onPress={() => navigation.navigate("EditPost", {item} )}
+            >
+                <Icon name="comment-edit-outline" color="white" size={20} />
+            </TouchableOpacity>
+
+            <TouchableOpacity style={[styles.buttonIcon, { backgroundColor: 'black' }]}
+                onPress={() => navigation.navigate("PostDetailScreen",  {item})}
+            >
+                <Ionicons name="ios-eye-outline"
+                    color="white"
+                    size={20}
+                />
+            </TouchableOpacity>
+
+            <TouchableOpacity style={[styles.buttonIcon, { backgroundColor: 'white' }]}
+                onPress={() => onShare(GLOBAL.BASE_URL + 'news/' + item.slug, item.title, item.subtitle)}
+            >
+                <Ionicons name="share-social"
+                    color={GLOBAL.COLOR.DARK}
+                    size={20}
+                />
+            </TouchableOpacity>
+        </View>
+    </View>
 
 
                 )
@@ -166,14 +104,13 @@ const PostListScreen = (props) => {
         </View>
         
         </>
-    ):
-    (<Login/>)
 
+        ):
+        (<Login/>)
     )
 }
 
 const styles = StyleSheet.create({
-
     
     headerBar: {
         backgroundColor: GLOBAL.COLOR.LIGHT,
@@ -187,7 +124,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         alignContent: 'center',
     },
-    
     container:{
         flex:1,
         paddingVertical: 0,
@@ -228,7 +164,7 @@ const styles = StyleSheet.create({
         marginTop:10,
     },
     tableText:{
-        fontSize:19,
+        fontSize:17,
         marginHorizontal:2,
         paddingHorizontal:4,
         fontWeight:'600',

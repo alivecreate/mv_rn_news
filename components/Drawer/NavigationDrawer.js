@@ -76,6 +76,9 @@ return(
     <>
     <NavigationContainer
     
+    options={{
+        headerShown: false
+    }}
 
     >
       <Drawer.Navigator initialRouteName="Home" 
